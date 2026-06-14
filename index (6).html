@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KALIUM — Servidor Minecraft Semivanilla · Técnico · Anárquico</title>
+  <meta name="description" content="Kalium es un servidor Minecraft semivanilla, semicustom, semianárquico y técnico. Survival puro con libertad real. Conéctate en play.kaliummc.es" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loader">
+    <div class="loader-inner">
+      <img src="LOGO.png" alt="Kalium" class="loader-logo" onerror="this.style.display='none'" />
+      <div class="loader-text">KALIUM</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <div class="loader-sub">Iniciando servidor...</div>
+    </div>
+  </div>
+
+  <!-- CURSOR GLOW -->
+  <div id="cursor-glow"></div>
+
+  <!-- PARTICLES -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="LOGO.png" alt="Kalium" onerror="this.style.display='none'" />
+        <span>KALIUM</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Inicio</a></li>
+        <li><a href="comojugar.html">Cómo Jugar</a></li>
+        <li><a href="reglas.html">Reglas</a></li>
+        <li><a href="https://discord.gg/JebTuFsWKD" target="_blank">Discord</a></li>
+        <li><a href="tienda.html" class="nav-store-link">Tienda</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="server-status">
+          <span class="status-dot"></span>
+          <span class="status-ip">play.kaliummc.es</span>
+          <span class="status-players" id="online-players">0 online</span>
+        </div>
+        <button class="btn-connect" onclick="copyIP('play.kaliummc.es')">Copiar IP</button>
+      </div>
+      <button class="nav-toggle" id="nav-toggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="comojugar.html">Cómo Jugar</a></li>
+        <li><a href="reglas.html">Reglas</a></li>
+        <li><a href="https://discord.gg/JebTuFsWKD" target="_blank">Discord</a></li>
+        <li><a href="tienda.html" style="color:var(--blue-neon);font-weight:700;">🛒 Tienda</a></li>
+      </ul>
+      <div class="mobile-server">
+        <span class="status-dot"></span>
+        <span>play.kaliummc.es</span>
+        <span id="online-players-mobile">0 online</span>
+      </div>
+      <button class="btn-connect" style="width:100%;justify-content:center;border-radius:10px;margin-top:4px;" onclick="copyIP('play.kaliummc.es')">📋 Copiar IP</button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO / INICIO ===== -->
+  <section id="inicio" class="hero-section">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-glow-orb orb1"></div>
+    <div class="hero-glow-orb orb2"></div>
+    <div class="hero-inner">
+      <div class="hero-content hero-fade-in">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          Servidor activo · 1.8 — 1.21
+        </div>
+        <h1 class="hero-title">
+          <span class="hero-line">Tu servidor</span>
+          <span class="hero-line accent">favorito.</span>
+        </h1>
+        <p class="hero-sub">Semivanilla. Semicustom. Semianárquico. Técnico.<br>Survival real, sin restricciones absurdas, con una comunidad que sabe jugar.</p>
+        <div class="hero-ctas">
+          <a href="#sobre" class="btn-primary">
+            <span>Conocer Kalium</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="tienda.html" class="btn-ghost">Ver Tienda</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num" data-target="12847">0</span>
+            <span class="stat-label">Jugadores registrados</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-num" id="hero-online">247</span>
+            <span class="stat-label">Online ahora</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-num" data-target="3">0</span>
+            <span class="stat-label">Temporadas</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual hero-fade-in-delay">
+        <div class="server-card glass">
+          <div class="server-card-header">
+            <span class="sc-dot green"></span>
+            <span class="sc-dot yellow"></span>
+            <span class="sc-dot red"></span>
+            <span class="sc-title">Servidor Principal</span>
+          </div>
+          <div class="sc-body">
+            <div class="sc-row"><span>IP</span><strong>play.kaliummc.es</strong></div>
+            <div class="sc-row"><span>Versión</span><strong>1.8 — 1.21</strong></div>
+            <div class="sc-row"><span>Modo</span><strong>Survival · Técnico</strong></div>
+            <div class="sc-row"><span>Online</span><strong class="green-text" id="card-online">Cargando...</strong></div>
+          </div>
+          <button class="sc-copy" id="copy-ip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2v1"/></svg>
+            Copiar IP
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- RECENT PURCHASES TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker"></div>
+  </div>
+
+  <!-- ===== SOBRE KALIUM ===== -->
+  <section id="sobre" class="section sobre-section">
+    <div class="container">
+      <div class="sobre-grid">
+        <div class="sobre-text">
+          <span class="section-tag">¿Qué es Kalium?</span>
+          <h2 class="section-title">Un servidor con personalidad propia.</h2>
+          <p class="sobre-desc">Kalium no es el típico servidor de Minecraft. Es una experiencia construida sobre cuatro pilares que lo hacen único en la escena hispanohablante.</p>
+          <div class="pilares">
+            <div class="pilar">
+              <div class="pilar-icon">🌿</div>
+              <div>
+                <strong>Semivanilla</strong>
+                <span>La experiencia base de Minecraft, sin alterar la esencia. El juego como debe ser.</span>
+              </div>
+            </div>
+            <div class="pilar">
+              <div class="pilar-icon">⚙️</div>
+              <div>
+                <strong>Semicustom</strong>
+                <span>Plugins cuidadosamente elegidos que amplían el juego sin romperlo.</span>
+              </div>
+            </div>
+            <div class="pilar">
+              <div class="pilar-icon">💀</div>
+              <div>
+                <strong>Semianárquico</strong>
+                <span>Libertad real. Pocas restricciones, mucha responsabilidad. El PvP y el robo están permitidos.</span>
+              </div>
+            </div>
+            <div class="pilar">
+              <div class="pilar-icon">🔬</div>
+              <div>
+                <strong>Técnico</strong>
+                <span>Granjas de mobs, redstone avanzada, farms automáticas. El meta técnico al máximo.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sobre-visual">
+          <div class="sobre-card glass">
+            <div class="sobre-card-header">
+              <img src="LOGO.png" alt="Kalium" class="sobre-logo" onerror="this.style.display='none'" />
+              <div>
+                <div class="sobre-card-title">KALIUM</div>
+                <div class="sobre-card-sub">Survival · Técnico · Anárquico</div>
+              </div>
+            </div>
+            <div class="sobre-stats-mini">
+              <div class="sobre-stat"><span class="sobre-stat-n" data-target="12847">0</span><span>Jugadores</span></div>
+              <div class="sobre-stat"><span class="sobre-stat-n" id="stat-online">247</span><span>Online</span></div>
+              <div class="sobre-stat"><span class="sobre-stat-n">99.9%</span><span>Uptime</span></div>
+            </div>
+            <div class="sobre-tags">
+              <span class="stag">🌲 Survival</span>
+              <span class="stag">⚡ Redstone</span>
+              <span class="stag">💀 PvP libre</span>
+              <span class="stag">🏠 Protecciones</span>
+              <span class="stag">💰 Economía</span>
+              <span class="stag">🗺️ Mapas grandes</span>
+            </div>
+            <div class="ip-box-mini glass">
+              <span>play.kaliummc.es</span>
+              <button onclick="copyIP('play.kaliummc.es')" id="copy-ip-2">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CARACTERÍSTICAS ===== -->
+  <section id="caracteristicas" class="section caract-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Características</span>
+        <h2 class="section-title">Todo lo que ofrece Kalium</h2>
+        <p class="section-sub">Un servidor pensado para jugadores que quieren profundidad, libertad y una comunidad real.</p>
+      </div>
+      <div class="caract-grid">
+        <div class="caract-card glass">
+          <div class="caract-icon">⚔️</div>
+          <h3>PvP libre</h3>
+          <p>El combate está permitido fuera de zonas protegidas. Defiende tu base, forma alianzas o actúa en solitario.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">🏗️</div>
+          <h3>Protecciones de terreno</h3>
+          <p>Reclama tu terreno y protege tus construcciones con ProtectionStones. Tu base, tus reglas.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">⚡</div>
+          <h3>Redstone y granjas</h3>
+          <p>El servidor soporta redstone avanzada y granjas técnicas sin límites de tick artificiales.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">💰</div>
+          <h3>Economía player-driven</h3>
+          <p>Tiendas de jugadores, Auction House y sistema de mercado dinámico. Los precios los pone la comunidad.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">🗺️</div>
+          <h3>Mundo enorme</h3>
+          <p>Mapas de gran tamaño generados con semillas técnicas. Siempre hay tierra virgen por explorar.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">🎯</div>
+          <h3>Habilidades (AuraSkills)</h3>
+          <p>Sistema de habilidades progresivo. Sube tus stats de minería, combate, pesca y más según juegas.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">🏆</div>
+          <h3>Clanes y tribus</h3>
+          <p>Únete o crea un clan, conquista territorios y compite en los rankings con tu equipo.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">🎮</div>
+          <h3>Minijuegos extra</h3>
+          <p>ChatGames, Parkour, Ruleta y más actividades para cuando necesitas un descanso del survival.</p>
+        </div>
+        <div class="caract-card glass">
+          <div class="caract-icon">🔄</div>
+          <h3>Compatible 1.8–1.21</h3>
+          <p>Conéctate desde cualquier versión de Java Edition. Sin excusas para no unirte.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RANGOS PREVIEW ===== -->
+  <section class="section rangos-preview-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Rangos</span>
+        <h2 class="section-title">Apoya el servidor</h2>
+        <p class="section-sub">Consigue ventajas exclusivas con nuestros rangos premium. Cada compra mantiene Kalium vivo.</p>
+      </div>
+      <div class="rangos-preview-grid">
+        <div class="rango-preview-card glass">
+          <img src="VIP.png" alt="Rango VIP" class="rango-preview-img" />
+          <div class="rango-preview-name">VIP</div>
+          <div class="rango-preview-price">Desde 6.00€</div>
+          <a href="tienda.html" class="btn-primary" style="font-size:0.85rem;padding:0.5rem 1.2rem;">Ver rangos →</a>
+        </div>
+        <div class="rango-preview-card glass">
+          <img src="LUNAR.png" alt="Rango LUNAR" class="rango-preview-img" />
+          <div class="rango-preview-name">LUNAR</div>
+          <div class="rango-preview-price">Desde 15.00€</div>
+          <a href="tienda.html" class="btn-primary" style="font-size:0.85rem;padding:0.5rem 1.2rem;">Ver rangos →</a>
+        </div>
+        <div class="rango-preview-card glass">
+          <img src="SOLAR.png" alt="Rango SOLAR" class="rango-preview-img" />
+          <div class="rango-preview-name">SOLAR</div>
+          <div class="rango-preview-price">Desde 25.00€</div>
+          <a href="tienda.html" class="btn-primary" style="font-size:0.85rem;padding:0.5rem 1.2rem;">Ver rangos →</a>
+        </div>
+        <div class="rango-preview-card glass">
+          <img src="KALIUM.png" alt="Rango KALIUM" class="rango-preview-img" />
+          <div class="rango-preview-name">KALIUM</div>
+          <div class="rango-preview-price">Desde 40.00€</div>
+          <a href="tienda.html" class="btn-primary" style="font-size:0.85rem;padding:0.5rem 1.2rem;">Ver rangos →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA UNIRSE ===== -->
+  <section class="section cta-join-section">
+    <div class="container">
+      <div class="cta-join glass">
+        <div class="cta-join-glow"></div>
+        <img src="LOGO.png" alt="Kalium" class="cta-join-logo" onerror="this.style.display='none'" />
+        <h2>¿Listo para jugar?</h2>
+        <p>Abre Minecraft, copia la IP y únete. Es completamente gratis.</p>
+        <div class="cta-ip-row">
+          <div class="cta-ip-box">
+            <span class="cta-ip-val">play.kaliummc.es</span>
+            <button class="cta-copy-btn" onclick="copyIP('play.kaliummc.es')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copiar IP
+            </button>
+          </div>
+        </div>
+        <div class="cta-join-btns">
+          <a href="https://discord.gg/JebTuFsWKD" class="btn-primary" target="_blank">Discord</a>
+          <a href="tienda.html" class="btn-ghost">Ver Tienda</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-glow"></div>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="LOGO.png" alt="Kalium" class="footer-logo" onerror="this.style.display='none'" />
+          <span class="footer-name">KALIUM</span>
+          <p>Servidor Minecraft semivanilla, semicustom, semianárquico y técnico. Conéctate en <strong>play.kaliummc.es</strong></p>
+          <div class="footer-social">
+            <a href="https://discord.gg/JebTuFsWKD" class="social-btn" title="Discord" target="_blank">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.08.112 18.1.13 18.11a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h5>Navegación</h5>
+            <a href="index.html">Inicio</a>
+            <a href="comojugar.html">Cómo Jugar</a>
+            <a href="reglas.html">Reglas</a>
+            <a href="https://discord.gg/JebTuFsWKD" target="_blank">Discord</a>
+            <a href="tienda.html">Tienda</a>
+          </div>
+          <div class="footer-col">
+            <h5>Tienda</h5>
+            <a href="tienda.html">Rangos</a>
+            <a href="tienda.html">Crate Keys</a>
+            <a href="tienda.html">Comandos</a>
+            <a href="tienda.html">Monedas</a>
+          </div>
+          <div class="footer-col">
+            <h5>Soporte</h5>
+            <a href="https://discord.gg/JebTuFsWKD" target="_blank">Discord</a>
+            <a href="reglas.html">Reglas</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 KALIUM. Todos los derechos reservados. No afiliado con Mojang Studios.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- NOTIFICATION -->
+  <div id="notification" class="notification"></div>
+
+  <script src="main.js"></script>
+
+  <style>
+    /* Rangos preview section */
+    .rangos-preview-section { background: transparent; }
+    .rangos-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .rango-preview-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem 1.5rem;
+      border-radius: 1.2rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .rango-preview-card:hover { transform: translateY(-6px); }
+    .rango-preview-img {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 18px rgba(14,165,233,0.5));
+    }
+    .rango-preview-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--sky);
+    }
+    .rango-preview-price {
+      font-size: 0.9rem;
+      color: var(--gray-400);
+      margin-bottom: 0.3rem;
+    }
+    @media (max-width: 768px) {
+      .rangos-preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .rangos-preview-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .rango-preview-img { width: 80px; height: 80px; }
+    }
+  </style>
+</body>
+</html>
