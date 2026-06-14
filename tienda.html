@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda — KALIUM MC</title>
+  <meta name="description" content="Apoya el servidor Kalium y consigue rangos exclusivos, monedas, llaves de crates y mucho más." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== TIENDA PAGE STYLES ===== */
+
+    /* --- TOP STORE HEADER BAR --- */
+    .store-topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      height: 64px; padding: 0 24px;
+      background: rgba(5,5,5,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .store-topbar-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.1rem; font-weight: 800; letter-spacing: 3px; color: var(--white);
+      text-decoration: none;
+    }
+    .store-topbar-logo img { width: 36px; height: 36px; object-fit: contain; border-radius: 8px; }
+    .store-topbar-center {
+      font-size: 0.8rem; color: var(--gray-400);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .store-topbar-right {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .topbar-nav-link {
+      font-size: 0.85rem; color: var(--gray-400); font-weight: 500;
+      padding: 6px 14px; border-radius: 8px; transition: var(--transition);
+    }
+    .topbar-nav-link:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+    .topbar-cart-btn {
+      position: relative; display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 20px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      border: none; color: var(--white);
+      font-family: var(--font); font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .topbar-cart-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--blue-glow); }
+    .topbar-cart-count {
+      background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 700;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* --- PROMO BANNER --- */
+    .store-promo { display: flex; gap: 16px; padding: 88px 40px 0; }
+    .promo-main { flex: 1; position: relative; min-height: 280px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+    .promo-track { display: flex; width: 100%; height: 100%; transition: transform 0.6s ease; }
+    .promo-slide {
+      flex: 0 0 100%; width: 100%; height: 100%; position: relative;
+      background-size: cover; background-position: center; display: flex; align-items: center; padding: 0 40px;
+    }
+    .promo-slide::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(5,5,5,0.88) 0%, rgba(5,5,5,0.4) 55%, rgba(5,5,5,0.1) 100%);
+    }
+    .promo-content { position: relative; z-index: 1; max-width: 460px; }
+    .promo-tag {
+      display: inline-block; padding: 4px 12px; border-radius: 20px;
+      background: rgba(14,165,233,0.15); border: 1px solid var(--border-blue);
+      color: var(--blue-neon); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .promo-title { font-size: 2.1rem; font-weight: 900; line-height: 1.15; margin-bottom: 16px; color: var(--white); }
+    .promo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .promo-btn {
+      padding: 10px 20px; border-radius: 10px; font-family: var(--font); font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; transition: var(--transition); border: 1px solid var(--border-blue);
+      background: rgba(14,165,233,0.12); color: var(--blue-neon);
+    }
+    .promo-btn:hover { background: rgba(14,165,233,0.22); border-color: var(--blue-neon); }
+    .promo-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(0,0,0,0.4); border: 1px solid var(--border); color: var(--white); font-size: 1.1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; transition: var(--transition);
+    }
+    .promo-arrow:hover { background: rgba(14,165,233,0.3); border-color: var(--border-blue); }
+    .promo-prev { left: 16px; }
+    .promo-next { right: 16px; }
+    .promo-dots { position: absolute; bottom: 16px; left: 40px; z-index: 2; display: flex; gap: 8px; }
+    .promo-dot { width: 22px; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.25); cursor: pointer; transition: var(--transition); border: none; }
+    .promo-dot.active { background: var(--blue-neon); }
+    .promo-side { display: flex; flex-direction: column; gap: 16px; width: 260px; flex-shrink: 0; }
+    .promo-side-card {
+      flex: 1; border-radius: var(--radius); padding: 18px 20px; display: flex; flex-direction: column;
+      justify-content: center; gap: 4px; border: 1px solid var(--border); text-decoration: none;
+    }
+    .promo-side-card.online { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(14,165,233,0.05)); border-color: rgba(245,158,11,0.25); }
+    .promo-side-card.discord { background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(14,165,233,0.1)); border-color: rgba(99,102,241,0.3); }
+    .promo-side-label { font-size: 0.78rem; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; }
+    .promo-side-sub { font-size: 0.75rem; color: var(--gray-400); font-family: var(--mono); }
+    @media (max-width: 900px) {
+      .store-promo { padding: 80px 20px 0; flex-direction: column; }
+      .promo-side { width: 100%; flex-direction: row; }
+      .promo-main { min-height: 220px; }
+      .promo-title { font-size: 1.5rem; }
+    }
+
+    /* --- STORE LAYOUT --- */
+    .store-layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 64px;
+    }
+
+    /* --- SIDEBAR --- */
+    .store-sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: rgba(5,5,5,0.9);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding: 24px 0;
+      z-index: 100;
+    }
+    .sidebar-heading {
+      padding: 0 20px 16px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 2px;
+      color: var(--blue-neon); text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sidebar-heading svg { opacity: 0.8; }
+    .sidebar-nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 20px;
+      font-size: 0.9rem; font-weight: 500; color: var(--gray-400);
+      cursor: pointer; transition: var(--transition);
+      border-left: 3px solid transparent;
+      border-radius: 0;
+      background: none;
+      width: 100%; text-align: left;
+      font-family: var(--font);
+      border-right: none; border-top: none; border-bottom: none;
+    }
+    .sidebar-nav-item:hover { color: var(--white); background: rgba(255,255,255,0.04); border-left-color: rgba(14,165,233,0.3); }
+    .sidebar-nav-item.active { color: var(--white); background: rgba(14,165,233,0.08); border-left-color: var(--blue-neon); }
+    .sidebar-nav-item .nav-icon { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; flex-shrink: 0; }
+    .sidebar-nav-item .nav-icon-emoji { font-size: 1.2rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sidebar-nav-item span { flex: 1; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-sub-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 20px 8px 52px;
+      font-size: 0.82rem; color: var(--gray-600);
+      cursor: pointer; transition: var(--transition);
+      width: 100%; text-align: left; background: none; border: none;
+      font-family: var(--font);
+    }
+    .sidebar-sub-item:hover { color: var(--white); }
+    .sidebar-sub-item.active { color: var(--blue-neon); font-weight: 600; }
+
+    /* Mobile sidebar toggle */
+    .sidebar-toggle-btn {
+      display: none;
+      position: fixed; bottom: 88px; left: 16px; z-index: 300;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(14,165,233,0.15); border: 1px solid var(--border-blue);
+      color: var(--blue-neon); font-size: 1.2rem; cursor: pointer;
+      align-items: center; justify-content: center;
+    }
+    .store-sidebar.mobile-open { transform: translateX(0) !important; }
+
+    /* --- MAIN CONTENT --- */
+    .store-main {
+      flex: 1; padding: 32px 40px; min-width: 0;
+      background: transparent;
+      position: relative; z-index: 1;
+    }
+
+    /* --- SECTION BREADCRUMB / HEADER --- */
+    .shop-section-header {
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .shop-section-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--blue-neon); margin-bottom: 6px; display: block;
+    }
+    .shop-section-title {
+      font-size: 2rem; font-weight: 900; line-height: 1.1;
+      background: linear-gradient(135deg, var(--white) 40%, var(--blue-neon) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .shop-section-desc {
+      font-size: 0.88rem; color: var(--gray-400); margin-top: 8px; line-height: 1.6;
+    }
+    .shop-section-banner {
+      padding: 16px 20px; border-radius: 12px;
+      background: rgba(14,165,233,0.06); border: 1px solid rgba(14,165,233,0.15);
+      font-size: 0.85rem; color: var(--gray-400); margin-bottom: 28px; line-height: 1.6;
+    }
+    .shop-section-banner strong { color: var(--blue-neon); }
+
+    /* --- SALE BADGE --- */
+    .sale-badge {
+      display: inline-block;
+      padding: 2px 8px; border-radius: 5px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.5px;
+      color: #000; vertical-align: middle; margin-left: 6px;
+    }
+    .hot-badge {
+      display: inline-block;
+      padding: 2px 8px; border-radius: 5px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.5px;
+      color: #fff; vertical-align: middle; margin-left: 6px;
+    }
+
+    /* --- PRODUCT GRID --- */
+    .shop-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    /* --- PRODUCT CARD --- */
+    .shop-item-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .shop-item-card:hover {
+      border-color: rgba(14,165,233,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(14,165,233,0.12);
+    }
+    .shop-item-card.featured {
+      border-color: rgba(245,158,11,0.35);
+      box-shadow: 0 0 30px rgba(245,158,11,0.06);
+    }
+    .shop-item-card.featured:hover {
+      border-color: rgba(245,158,11,0.6);
+      box-shadow: 0 12px 40px rgba(245,158,11,0.15);
+    }
+    .card-discount-pill {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      padding: 3px 9px; border-radius: 20px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      font-size: 0.68rem; font-weight: 800; color: #000;
+      letter-spacing: 0.5px;
+    }
+    .card-img-wrap {
+      display: flex; align-items: center; justify-content: center;
+      padding: 28px 20px 16px;
+      background: radial-gradient(circle at 50% 50%, rgba(14,165,233,0.07) 0%, transparent 70%);
+    }
+    .card-img-wrap img {
+      width: 100px; height: 100px; object-fit: contain;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 20px rgba(14,165,233,0.45));
+      transition: transform 0.3s, filter 0.3s;
+    }
+    .shop-item-card:hover .card-img-wrap img {
+      transform: scale(1.08) translateY(-3px);
+      filter: drop-shadow(0 0 30px rgba(14,165,233,0.7));
+    }
+    .shop-item-card.featured .card-img-wrap {
+      background: radial-gradient(circle at 50% 50%, rgba(245,158,11,0.1) 0%, transparent 70%);
+    }
+    .shop-item-card.featured .card-img-wrap img {
+      filter: drop-shadow(0 0 20px rgba(245,158,11,0.4));
+    }
+    .shop-item-card.featured:hover .card-img-wrap img {
+      filter: drop-shadow(0 0 30px rgba(245,158,11,0.65));
+    }
+    .card-body {
+      padding: 0 16px 16px;
+      display: flex; flex-direction: column; gap: 10px; flex: 1;
+    }
+    .card-name {
+      font-size: 0.88rem; font-weight: 800; color: var(--white);
+      letter-spacing: 0.5px; text-align: center; line-height: 1.3;
+    }
+    .card-prices {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .card-price-old {
+      font-size: 0.8rem; color: var(--gray-600);
+      text-decoration: line-through; font-weight: 500;
+    }
+    .card-price-new {
+      font-size: 1.25rem; font-weight: 900; color: var(--blue-neon);
+    }
+    .shop-item-card.featured .card-price-new { color: #f59e0b; }
+    .card-add-btn {
+      width: 100%; padding: 10px;
+      background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.25);
+      border-radius: 10px; color: var(--blue-neon);
+      font-family: var(--font); font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      letter-spacing: 0.3px; margin-top: auto;
+    }
+    .card-add-btn:hover {
+      background: rgba(14,165,233,0.2); border-color: var(--blue-neon);
+      transform: none; box-shadow: 0 0 16px rgba(14,165,233,0.25);
+    }
+    .shop-item-card.featured .card-add-btn {
+      background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3);
+      color: #f59e0b;
+    }
+    .shop-item-card.featured .card-add-btn:hover {
+      background: rgba(245,158,11,0.2); border-color: #f59e0b;
+      box-shadow: 0 0 16px rgba(245,158,11,0.25);
+    }
+    .card-perks {
+      font-size: 0.75rem; color: var(--gray-600); text-align: center; line-height: 1.4;
+      padding-top: 2px;
+    }
+
+    /* --- SUBSECTION LABEL --- */
+    .subsection-label {
+      display: flex; align-items: center; gap: 14px;
+      margin: 32px 0 18px; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400);
+    }
+    .subsection-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .subsection-label span { white-space: nowrap; }
+
+    /* --- KEYS GRID (wide cards) --- */
+    .keys-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+    .key-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 14px 14px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      transition: var(--transition); position: relative;
+    }
+    .key-card:hover { border-color: rgba(14,165,233,0.3); transform: translateY(-3px); }
+    .key-card-icon { font-size: 2.4rem; }
+    .key-card-name { font-size: 0.8rem; font-weight: 700; color: var(--white); text-align: center; }
+    .key-card-qty { font-size: 0.75rem; color: var(--gray-400); }
+    .key-card-price { font-size: 1.05rem; font-weight: 900; color: var(--blue-neon); }
+    .key-card-btn {
+      width: 100%; padding: 8px;
+      background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.2);
+      border-radius: 8px; color: var(--blue-neon);
+      font-family: var(--font); font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; transition: var(--transition);
+    }
+    .key-card-btn:hover { background: rgba(14,165,233,0.2); border-color: var(--blue-neon); }
+
+    /* --- COINS GRID --- */
+    .coins-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+    .coin-pack-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 14px 14px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      transition: var(--transition); position: relative; text-align: center;
+    }
+    .coin-pack-card:hover { border-color: rgba(245,158,11,0.35); transform: translateY(-3px); }
+    .coin-pack-card.popular {
+      border-color: rgba(245,158,11,0.4);
+      background: rgba(245,158,11,0.04);
+    }
+    .coin-icon { font-size: 2.2rem; }
+    .coin-amount { font-size: 1.1rem; font-weight: 900; color: #f59e0b; }
+    .coin-label { font-size: 0.72rem; color: var(--gray-400); }
+    .coin-price { font-size: 1rem; font-weight: 800; color: var(--white); }
+    .coin-btn {
+      width: 100%; padding: 8px;
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 8px; color: #f59e0b;
+      font-family: var(--font); font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; transition: var(--transition);
+    }
+    .coin-btn:hover { background: rgba(245,158,11,0.2); border-color: #f59e0b; }
+    .popular-pill {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      padding: 2px 10px; border-radius: 20px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      font-size: 0.62rem; font-weight: 800; color: #000; white-space: nowrap;
+    }
+
+    /* --- COMMANDS SECTION --- */
+    .commands-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .command-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex; align-items: center; gap: 14px;
+      transition: var(--transition);
+    }
+    .command-card:hover { border-color: rgba(14,165,233,0.3); transform: translateY(-2px); }
+    .command-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .command-info { flex: 1; }
+    .command-name { font-size: 0.88rem; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+    .command-desc { font-size: 0.75rem; color: var(--gray-400); line-height: 1.4; }
+    .command-price-col { text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+    .command-price { font-size: 1rem; font-weight: 900; color: var(--blue-neon); }
+    .command-btn {
+      padding: 6px 14px; border-radius: 8px;
+      background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.2);
+      color: var(--blue-neon); font-family: var(--font); font-size: 0.72rem; font-weight: 700;
+      cursor: pointer; transition: var(--transition); white-space: nowrap;
+    }
+    .command-btn:hover { background: rgba(14,165,233,0.2); border-color: var(--blue-neon); }
+
+    /* --- CONTENT SECTIONS (hidden by default) --- */
+    .shop-section-panel { display: none; }
+    .shop-section-panel.active { display: block; }
+
+    /* --- CART SIDEBAR --- */
+    .cart-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      z-index: 2000; opacity: 0; visibility: hidden;
+      transition: var(--transition);
+    }
+    .cart-overlay.open { opacity: 1; visibility: visible; }
+    .cart-sidebar-panel {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 380px; max-width: 100vw;
+      z-index: 2001; display: flex; flex-direction: column;
+      transform: translateX(100%); transition: var(--transition);
+      border-left: 1px solid var(--border);
+      background: rgba(8,8,8,0.97);
+      backdrop-filter: blur(20px);
+    }
+    .cart-sidebar-panel.open { transform: translateX(0); }
+    .cart-header-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+    }
+    .cart-header-row h3 { font-size: 1rem; font-weight: 700; }
+    .cart-close-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+      color: var(--gray-400); font-size: 0.9rem; cursor: pointer;
+      transition: var(--transition); display: flex; align-items: center; justify-content: center;
+    }
+    .cart-close-btn:hover { color: var(--white); border-color: var(--border-blue); }
+    .cart-items-list { flex: 1; overflow-y: auto; padding: 16px; }
+    .cart-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; gap: 12px; }
+    .cart-empty-state .empty-icon { font-size: 3rem; opacity: 0.3; }
+    .cart-empty-state p { color: var(--gray-600); font-size: 0.9rem; }
+    .cart-product-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px; border-radius: 10px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .cart-product-info { flex: 1; }
+    .cart-product-name { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+    .cart-product-price { font-size: 0.82rem; color: var(--blue-neon); font-weight: 600; }
+    .cart-remove-btn {
+      width: 28px; height: 28px; border-radius: 6px;
+      border: 1px solid var(--border); background: none;
+      color: var(--gray-600); cursor: pointer; font-size: 0.8rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition); flex-shrink: 0;
+    }
+    .cart-remove-btn:hover { color: #ef4444; border-color: rgba(239,68,68,0.4); }
+    .cart-footer-panel {
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .cart-total-row { display: flex; justify-content: space-between; font-size: 1rem; font-weight: 700; }
+    #t-cart-total {
+      background: linear-gradient(135deg, var(--white), var(--blue-neon));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nick-field label { display: block; font-size: 0.78rem; color: var(--gray-400); margin-bottom: 6px; }
+    .nick-field input {
+      width: 100%; padding: 10px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+      color: var(--white); font-family: var(--font); font-size: 0.88rem;
+      transition: var(--transition);
+    }
+    .nick-field input:focus { outline: none; border-color: var(--border-blue); }
+    .nick-field input::placeholder { color: var(--gray-600); }
+    .checkout-btn-full {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      border: none; border-radius: 12px; color: var(--white);
+      font-family: var(--font); font-size: 0.95rem; font-weight: 800;
+      cursor: pointer; transition: var(--transition);
+      letter-spacing: 0.5px;
+    }
+    .checkout-btn-full:hover { box-shadow: 0 4px 24px var(--blue-glow); transform: translateY(-1px); }
+    .cart-note-small { font-size: 0.72rem; color: var(--gray-600); text-align: center; }
+
+    /* --- NOTIFICATION --- */
+    .t-notification {
+      position: fixed; bottom: 96px; right: 24px;
+      padding: 12px 20px; border-radius: 10px;
+      background: var(--gray-800); border: 1px solid var(--border);
+      color: var(--white); font-size: 0.88rem; font-weight: 500;
+      z-index: 9999; transform: translateY(20px); opacity: 0; visibility: hidden;
+      transition: all 0.3s ease; max-width: 300px;
+    }
+    .t-notification.show { transform: translateY(0); opacity: 1; visibility: visible; }
+    .t-notification.success { border-color: rgba(34,197,94,0.4); }
+
+    /* --- FLOATING CART BTN --- */
+    .float-cart-btn {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      border: none; font-size: 1.4rem; cursor: pointer;
+      box-shadow: 0 4px 20px var(--blue-glow);
+      transition: var(--transition); z-index: 999;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .float-cart-btn:hover { transform: scale(1.1); }
+    .float-cart-count {
+      position: absolute; top: -4px; right: -4px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #ef4444; font-size: 0.7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font); color: var(--white);
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 900px) {
+      .store-sidebar {
+        position: fixed; top: 64px; left: 0; bottom: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 200;
+      }
+      .store-main { padding: 24px 20px; }
+      .sidebar-toggle-btn { display: flex; }
+      .store-sidebar-overlay {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        z-index: 199;
+      }
+      .store-sidebar-overlay.open { display: block; }
+      .topbar-nav-link { display: none; }
+    }
+    @media (max-width: 600px) {
+      .shop-products-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .keys-grid { grid-template-columns: 1fr 1fr; }
+      .coins-grid { grid-template-columns: 1fr 1fr; }
+      .commands-grid { grid-template-columns: 1fr; }
+      .store-main { padding: 16px; }
+      .shop-section-title { font-size: 1.4rem; }
+      .cart-sidebar-panel { width: 100%; max-width: 100%; border-left: none; }
+    }
+
+    /* --- PARTICLES / BG --- */
+    #particles-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.4; }
+    #cursor-glow { position: fixed; pointer-events: none; z-index: 9000; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(14,165,233,0.05) 0%, transparent 70%); transform: translate(-50%, -50%); transition: transform 0.1s linear; }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR GLOW -->
+  <div id="cursor-glow"></div>
+
+  <!-- PARTICLES -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="store-topbar">
+    <a href="index.html" class="store-topbar-logo">
+      <img src="LOGO.png" alt="Kalium" onerror="this.style.display='none'" />
+      KALIUM
+    </a>
+    <div class="store-topbar-center">
+      <span class="status-dot"></span>
+      <span style="font-family: var(--mono); font-size: 0.75rem; color: var(--gray-400);">play.kaliummc.es</span>
+      <span id="topbar-online" style="color: var(--blue-neon); font-weight: 600; font-size: 0.75rem;">247 online</span>
+    </div>
+    <div class="store-topbar-right">
+      <a href="index.html" class="topbar-nav-link">← Volver al inicio</a>
+      <a href="reglas.html" class="topbar-nav-link">Reglas</a>
+      <a href="https://discord.gg/JebTuFsWKD" class="topbar-nav-link" target="_blank">Discord</a>
+      <button class="topbar-cart-btn" id="t-open-cart">
+        🛒 Carrito
+        <span class="topbar-cart-count" id="t-cart-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== PROMO BANNER ===== -->
+  <div class="store-promo">
+    <div class="promo-main">
+      <div class="promo-track" id="promo-track">
+      <div class="promo-slide" style="background-image:url('survival-1.png')">
+        <div class="promo-content">
+          <span class="promo-tag">🎁 Próximamente</span>
+          <h2 class="promo-title">Pack de Kits Exclusivos</h2>
+          <div class="promo-actions">
+            <button class="promo-btn" onclick="tShowNotif('🚧 ¡Muy pronto disponible!')">ℹ️ Más información</button>
+          </div>
+        </div>
+      </div>
+      <div class="promo-slide" style="background-image:url('survival-2.png')">
+        <div class="promo-content">
+          <span class="promo-tag">🛡️ Próximamente</span>
+          <h2 class="promo-title">Protección Exclusiva</h2>
+          <div class="promo-actions">
+            <button class="promo-btn" onclick="tShowNotif('🚧 ¡Muy pronto disponible!')">ℹ️ Más información</button>
+          </div>
+        </div>
+      </div>
+      <div class="promo-slide" style="background-image:url('survival-1.png')">
+        <div class="promo-content">
+          <span class="promo-tag">⚔️ Próximamente</span>
+          <h2 class="promo-title">Pase de Batalla Premium</h2>
+          <div class="promo-actions">
+            <button class="promo-btn" onclick="tShowNotif('🚧 ¡Muy pronto disponible!')">ℹ️ Más información</button>
+          </div>
+        </div>
+      </div>
+      </div>
+      <button class="promo-arrow promo-prev" onclick="promoMove(-1)">‹</button>
+      <button class="promo-arrow promo-next" onclick="promoMove(1)">›</button>
+      <div class="promo-dots">
+        <button class="promo-dot active" onclick="promoGo(0)"></button>
+        <button class="promo-dot" onclick="promoGo(1)"></button>
+        <button class="promo-dot" onclick="promoGo(2)"></button>
+      </div>
+    </div>
+    <div class="promo-side">
+      <div class="promo-side-card online">
+        <div class="promo-side-label">🌐 play.kaliummc.es</div>
+        <div class="promo-side-sub" id="promo-online">247 jugadores conectados</div>
+      </div>
+      <a href="https://discord.gg/JebTuFsWKD" target="_blank" class="promo-side-card discord">
+        <div class="promo-side-label">💬 ¡Únete a nuestro Discord!</div>
+        <div class="promo-side-sub">Comunidad activa 24/7</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ===== STORE LAYOUT ===== -->
+  <div class="store-layout">
+
+    <!-- SIDEBAR OVERLAY (mobile) -->
+    <div class="store-sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="store-sidebar" id="store-sidebar">
+      <div class="sidebar-heading">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Empieza a comprar
+      </div>
+
+      <button class="sidebar-nav-item active" data-section="rangos">
+        <img src="KALIUM.png" alt="" class="nav-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <span class="nav-icon-emoji" style="display:none;">👑</span>
+        <span>Rangos</span>
+      </button>
+
+      <button class="sidebar-nav-item" data-section="llaves">
+        <span class="nav-icon-emoji">🗝️</span>
+        <span>Llaves de Crates</span>
+      </button>
+
+      <button class="sidebar-nav-item" data-section="monedas">
+        <span class="nav-icon-emoji">🪙</span>
+        <span>Monedas (Kalios)</span>
+      </button>
+
+      <button class="sidebar-nav-item" data-section="comandos">
+        <span class="nav-icon-emoji">⚡</span>
+        <span>Comandos</span>
+      </button>
+
+      <div class="sidebar-divider"></div>
+
+      <button class="sidebar-nav-item" data-section="packs">
+        <span class="nav-icon-emoji">🎁</span>
+        <span>Packs Especiales</span>
+      </button>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="store-main">
+
+      <!-- ===== RANGOS ===== -->
+      <div class="shop-section-panel active" id="section-rangos">
+        <div class="shop-section-header">
+          <span class="shop-section-label">🚀 Tienda › Rangos</span>
+          <h1 class="shop-section-title">Rangos Permanentes</h1>
+          <p class="shop-section-desc">Apoya el servidor y disfruta de ventajas exclusivas para siempre.</p>
+        </div>
+
+        <div class="shop-section-banner">
+          ¿Quieres disfrutar de un Rango Global Permanente? ¡Estás en el lugar correcto!<br>
+          Podrás disfrutar del rango que compres <strong>¡PARA SIEMPRE!</strong> en todos los modos del servidor.
+        </div>
+
+        <div class="subsection-label"><span>⭐ Rangos Estándar</span></div>
+        <div class="shop-products-grid">
+
+          <!-- VIP -->
+          <div class="shop-item-card">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="VIP.png" alt="Rango VIP" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">VIP</div>
+              <div class="card-perks">Prefijo · /nick · /fly en lobby · acceso a crates VIP</div>
+              <div class="card-prices">
+                <span class="card-price-old">10.00€</span>
+                <span class="card-price-new">6.00€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango VIP', 6.00)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+          <!-- VIP+ -->
+          <div class="shop-item-card">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="VIP.png" alt="Rango VIP+" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">VIP+</div>
+              <div class="card-perks">Todo lo de VIP · /tp sin límites · /hat · kits mejorados</div>
+              <div class="card-prices">
+                <span class="card-price-old">16.00€</span>
+                <span class="card-price-new">9.60€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango VIP+', 9.60)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+          <!-- LUNAR -->
+          <div class="shop-item-card">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="LUNAR.png" alt="Rango LUNAR" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">LUNAR</div>
+              <div class="card-perks">/fly en survival · partículas exclusivas · crates LUNAR · soporte prioritario</div>
+              <div class="card-prices">
+                <span class="card-price-old">25.00€</span>
+                <span class="card-price-new">15.00€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango LUNAR', 15.00)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+          <!-- LUNAR+ -->
+          <div class="shop-item-card">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="LUNAR.png" alt="Rango LUNAR+" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">LUNAR+</div>
+              <div class="card-perks">Todo LUNAR · doble crate · /heal limitado · comandos extra</div>
+              <div class="card-prices">
+                <span class="card-price-old">35.00€</span>
+                <span class="card-price-new">21.00€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango LUNAR+', 21.00)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+          <!-- SOLAR -->
+          <div class="shop-item-card featured">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="SOLAR.png" alt="Rango SOLAR" style="filter: drop-shadow(0 0 22px rgba(245,158,11,0.55));" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">SOLAR</div>
+              <div class="card-perks">/god mode lobby · trajes exclusivos · 3 homes extra · acceso beta</div>
+              <div class="card-prices">
+                <span class="card-price-old">42.00€</span>
+                <span class="card-price-new">25.00€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango SOLAR', 25.00)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+          <!-- SOLAR+ -->
+          <div class="shop-item-card featured">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="SOLAR.png" alt="Rango SOLAR+" style="filter: drop-shadow(0 0 22px rgba(245,158,11,0.55));" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">SOLAR+</div>
+              <div class="card-perks">Todo SOLAR · nick con colores · /repair · holograma personalizado</div>
+              <div class="card-prices">
+                <span class="card-price-old">55.00€</span>
+                <span class="card-price-new">33.00€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango SOLAR+', 33.00)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+          <!-- KALIUM -->
+          <div class="shop-item-card featured">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="KALIUM.png" alt="Rango KALIUM" style="filter: drop-shadow(0 0 26px rgba(245,158,11,0.7));" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">KALIUM</div>
+              <div class="card-perks">Máximo rango · todos los beneficios · /back ilimitado · tag único</div>
+              <div class="card-prices">
+                <span class="card-price-old">67.00€</span>
+                <span class="card-price-new">40.00€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango KALIUM', 40.00)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+          <!-- SUPER KALIUM -->
+          <div class="shop-item-card featured">
+            <div class="card-discount-pill">-40% OFF</div>
+            <div class="card-img-wrap">
+              <img src="KALIUM.png" alt="Rango SUPER KALIUM" style="filter: drop-shadow(0 0 30px rgba(245,158,11,0.8));" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">SUPER KALIUM</div>
+              <div class="card-perks">Rango élite · chat privado VIP · soporte 1:1 · contenido exclusivo</div>
+              <div class="card-prices">
+                <span class="card-price-old">100.00€</span>
+                <span class="card-price-new">60.00€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Rango SUPER KALIUM', 60.00)">
+                🛒 Añadir al carrito
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== LLAVES ===== -->
+      <div class="shop-section-panel" id="section-llaves">
+        <div class="shop-section-header">
+          <span class="shop-section-label">🗝️ Tienda › Llaves de Crates</span>
+          <h1 class="shop-section-title">Llaves de Crates</h1>
+          <p class="shop-section-desc">Abre crates exclusivos y consigue objetos, recursos y sorpresas únicas.</p>
+        </div>
+        <div class="shop-section-banner">
+          Las llaves te dan acceso a los crates del servidor. Cada tipo de crate tiene su propia tabla de recompensas.<br>
+          <strong>Cuantas más llaves compres, más ahorro obtendrás.</strong>
+        </div>
+
+        <div class="subsection-label"><span>🔑 Llaves VIP</span></div>
+        <div class="keys-grid">
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x1</div>
+            <div class="key-card-icon">🗝️</div>
+            <div class="key-card-name">Llave VIP</div>
+            <div class="key-card-qty">1 llave</div>
+            <div class="key-card-price">1.50€</div>
+            <button class="key-card-btn" onclick="tAddToCart('1x Llave VIP', 1.50)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x8</div>
+            <div class="key-card-icon">🗝️</div>
+            <div class="key-card-name">Pack VIP ×8</div>
+            <div class="key-card-qty">8 llaves · -10%</div>
+            <div class="key-card-price">10.80€</div>
+            <button class="key-card-btn" onclick="tAddToCart('8x Llaves VIP', 10.80)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x32</div>
+            <div class="key-card-icon">🗝️</div>
+            <div class="key-card-name">Pack VIP ×32</div>
+            <div class="key-card-qty">32 llaves · -20%</div>
+            <div class="key-card-price">38.40€</div>
+            <button class="key-card-btn" onclick="tAddToCart('32x Llaves VIP', 38.40)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x64</div>
+            <div class="key-card-icon">🗝️</div>
+            <div class="key-card-name">Pack VIP ×64</div>
+            <div class="key-card-qty">64 llaves · -30%</div>
+            <div class="key-card-price">67.20€</div>
+            <button class="key-card-btn" onclick="tAddToCart('64x Llaves VIP', 67.20)">Comprar</button>
+          </div>
+        </div>
+
+        <div class="subsection-label"><span>🌙 Llaves LUNAR</span></div>
+        <div class="keys-grid">
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x1</div>
+            <div class="key-card-icon">🌙</div>
+            <div class="key-card-name">Llave LUNAR</div>
+            <div class="key-card-qty">1 llave</div>
+            <div class="key-card-price">2.50€</div>
+            <button class="key-card-btn" onclick="tAddToCart('1x Llave LUNAR', 2.50)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x8</div>
+            <div class="key-card-icon">🌙</div>
+            <div class="key-card-name">Pack LUNAR ×8</div>
+            <div class="key-card-qty">8 llaves · -10%</div>
+            <div class="key-card-price">18.00€</div>
+            <button class="key-card-btn" onclick="tAddToCart('8x Llaves LUNAR', 18.00)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x32</div>
+            <div class="key-card-icon">🌙</div>
+            <div class="key-card-name">Pack LUNAR ×32</div>
+            <div class="key-card-qty">32 llaves · -20%</div>
+            <div class="key-card-price">64.00€</div>
+            <button class="key-card-btn" onclick="tAddToCart('32x Llaves LUNAR', 64.00)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x64</div>
+            <div class="key-card-icon">🌙</div>
+            <div class="key-card-name">Pack LUNAR ×64</div>
+            <div class="key-card-qty">64 llaves · -30%</div>
+            <div class="key-card-price">112.00€</div>
+            <button class="key-card-btn" onclick="tAddToCart('64x Llaves LUNAR', 112.00)">Comprar</button>
+          </div>
+        </div>
+
+        <div class="subsection-label"><span>☀️ Llaves SOLAR</span></div>
+        <div class="keys-grid">
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x1</div>
+            <div class="key-card-icon">☀️</div>
+            <div class="key-card-name">Llave SOLAR</div>
+            <div class="key-card-qty">1 llave</div>
+            <div class="key-card-price">3.50€</div>
+            <button class="key-card-btn" onclick="tAddToCart('1x Llave SOLAR', 3.50)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x8</div>
+            <div class="key-card-icon">☀️</div>
+            <div class="key-card-name">Pack SOLAR ×8</div>
+            <div class="key-card-qty">8 llaves · -10%</div>
+            <div class="key-card-price">25.20€</div>
+            <button class="key-card-btn" onclick="tAddToCart('8x Llaves SOLAR', 25.20)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x32</div>
+            <div class="key-card-icon">☀️</div>
+            <div class="key-card-name">Pack SOLAR ×32</div>
+            <div class="key-card-qty">32 llaves · -20%</div>
+            <div class="key-card-price">89.60€</div>
+            <button class="key-card-btn" onclick="tAddToCart('32x Llaves SOLAR', 89.60)">Comprar</button>
+          </div>
+          <div class="key-card">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x64</div>
+            <div class="key-card-icon">☀️</div>
+            <div class="key-card-name">Pack SOLAR ×64</div>
+            <div class="key-card-qty">64 llaves · -30%</div>
+            <div class="key-card-price">156.80€</div>
+            <button class="key-card-btn" onclick="tAddToCart('64x Llaves SOLAR', 156.80)">Comprar</button>
+          </div>
+        </div>
+
+        <div class="subsection-label"><span>💎 Llaves KALIUM</span></div>
+        <div class="keys-grid">
+          <div class="key-card" style="border-color:rgba(245,158,11,0.3);">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x1</div>
+            <div class="key-card-icon">💎</div>
+            <div class="key-card-name">Llave KALIUM</div>
+            <div class="key-card-qty">1 llave</div>
+            <div class="key-card-price" style="color:#f59e0b;">5.00€</div>
+            <button class="key-card-btn" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.25);color:#f59e0b;" onclick="tAddToCart('1x Llave KALIUM', 5.00)">Comprar</button>
+          </div>
+          <div class="key-card" style="border-color:rgba(245,158,11,0.3);">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;">x8</div>
+            <div class="key-card-icon">💎</div>
+            <div class="key-card-name">Pack KALIUM ×8</div>
+            <div class="key-card-qty">8 llaves · -10%</div>
+            <div class="key-card-price" style="color:#f59e0b;">36.00€</div>
+            <button class="key-card-btn" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.25);color:#f59e0b;" onclick="tAddToCart('8x Llaves KALIUM', 36.00)">Comprar</button>
+          </div>
+          <div class="key-card" style="border-color:rgba(245,158,11,0.3);">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x32</div>
+            <div class="key-card-icon">💎</div>
+            <div class="key-card-name">Pack KALIUM ×32</div>
+            <div class="key-card-qty">32 llaves · -20%</div>
+            <div class="key-card-price" style="color:#f59e0b;">128.00€</div>
+            <button class="key-card-btn" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.25);color:#f59e0b;" onclick="tAddToCart('32x Llaves KALIUM', 128.00)">Comprar</button>
+          </div>
+          <div class="key-card" style="border-color:rgba(245,158,11,0.3);">
+            <div class="card-discount-pill" style="position:relative;top:auto;left:auto;margin-bottom:4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">x64</div>
+            <div class="key-card-icon">💎</div>
+            <div class="key-card-name">Pack KALIUM ×64</div>
+            <div class="key-card-qty">64 llaves · -30%</div>
+            <div class="key-card-price" style="color:#f59e0b;">224.00€</div>
+            <button class="key-card-btn" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.25);color:#f59e0b;" onclick="tAddToCart('64x Llaves KALIUM', 224.00)">Comprar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MONEDAS ===== -->
+      <div class="shop-section-panel" id="section-monedas">
+        <div class="shop-section-header">
+          <span class="shop-section-label">🪙 Tienda › Monedas</span>
+          <h1 class="shop-section-title">Kalios — Monedas del Servidor</h1>
+          <p class="shop-section-desc">La moneda oficial de Kalium. Úsalos en el mercado de jugadores, en las tiendas del spawn y en eventos especiales.</p>
+        </div>
+        <div class="shop-section-banner">
+          Los <strong>Kalios</strong> son la moneda de cambio interna del servidor. Puedes gastarlos en el mercado de jugadores,
+          en la tienda del spawn, en subastas y en eventos especiales de temporada.
+        </div>
+
+        <div class="subsection-label"><span>🪙 Packs de Kalios</span></div>
+        <div class="coins-grid">
+          <div class="coin-pack-card">
+            <div class="coin-icon">🪙</div>
+            <div class="coin-amount">100K</div>
+            <div class="coin-label">Kalios</div>
+            <div class="coin-price">1.99€</div>
+            <button class="coin-btn" onclick="tAddToCart('100K Kalios', 1.99)">Comprar</button>
+          </div>
+          <div class="coin-pack-card">
+            <div class="coin-icon">🪙</div>
+            <div class="coin-amount">500K</div>
+            <div class="coin-label">Kalios · -10%</div>
+            <div class="coin-price">8.99€</div>
+            <button class="coin-btn" onclick="tAddToCart('500K Kalios', 8.99)">Comprar</button>
+          </div>
+          <div class="coin-pack-card popular">
+            <div class="popular-pill">⭐ Más popular</div>
+            <div class="coin-icon">💰</div>
+            <div class="coin-amount">1M</div>
+            <div class="coin-label">Kalios · -15%</div>
+            <div class="coin-price">16.99€</div>
+            <button class="coin-btn" onclick="tAddToCart('1M Kalios', 16.99)">Comprar</button>
+          </div>
+          <div class="coin-pack-card">
+            <div class="coin-icon">💰</div>
+            <div class="coin-amount">3M</div>
+            <div class="coin-label">Kalios · -20%</div>
+            <div class="coin-price">47.99€</div>
+            <button class="coin-btn" onclick="tAddToCart('3M Kalios', 47.99)">Comprar</button>
+          </div>
+          <div class="coin-pack-card">
+            <div class="coin-icon">🏦</div>
+            <div class="coin-amount">5M</div>
+            <div class="coin-label">Kalios · -25%</div>
+            <div class="coin-price">74.99€</div>
+            <button class="coin-btn" onclick="tAddToCart('5M Kalios', 74.99)">Comprar</button>
+          </div>
+          <div class="coin-pack-card popular">
+            <div class="popular-pill">💎 Mejor valor</div>
+            <div class="coin-icon">🏆</div>
+            <div class="coin-amount">10M</div>
+            <div class="coin-label">Kalios · -30%</div>
+            <div class="coin-price">139.99€</div>
+            <button class="coin-btn" onclick="tAddToCart('10M Kalios', 139.99)">Comprar</button>
+          </div>
+        </div>
+
+        <div class="subsection-label"><span>💎 Monedas Especiales</span></div>
+        <div class="coins-grid">
+          <div class="coin-pack-card" style="border-color:rgba(99,102,241,0.3);">
+            <div class="coin-icon">🔮</div>
+            <div class="coin-amount">10</div>
+            <div class="coin-label">Fichas de Diamante</div>
+            <div class="coin-price" style="color:#818cf8;">4.99€</div>
+            <button class="coin-btn" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25);color:#818cf8;" onclick="tAddToCart('10x Fichas Diamante', 4.99)">Comprar</button>
+          </div>
+          <div class="coin-pack-card" style="border-color:rgba(239,68,68,0.3);">
+            <div class="coin-icon">♦️</div>
+            <div class="coin-amount">5</div>
+            <div class="coin-label">Monedas de Rubí</div>
+            <div class="coin-price" style="color:#f87171;">9.99€</div>
+            <button class="coin-btn" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:#f87171;" onclick="tAddToCart('5x Monedas Rubí', 9.99)">Comprar</button>
+          </div>
+          <div class="coin-pack-card popular" style="border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.04);">
+            <div class="popular-pill">🔥 Limitado</div>
+            <div class="coin-icon">⭐</div>
+            <div class="coin-amount">3</div>
+            <div class="coin-label">Tokens de Evento</div>
+            <div class="coin-price">14.99€</div>
+            <button class="coin-btn" onclick="tAddToCart('3x Tokens Evento', 14.99)">Comprar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== COMANDOS ===== -->
+      <div class="shop-section-panel" id="section-comandos">
+        <div class="shop-section-header">
+          <span class="shop-section-label">⚡ Tienda › Comandos</span>
+          <h1 class="shop-section-title">Comandos Premium</h1>
+          <p class="shop-section-desc">Desbloquea comandos útiles de forma permanente sin necesidad de un rango.</p>
+        </div>
+        <div class="shop-section-banner">
+          Los comandos son <strong>permanentes</strong> y se añaden a tu cuenta independientemente de tu rango actual.
+          Algunos comandos son exclusivos para jugadores con rango LUNAR o superior.
+        </div>
+
+        <div class="subsection-label"><span>⚡ Comandos de Utilidad</span></div>
+        <div class="commands-grid">
+          <div class="command-card">
+            <div class="command-icon">🪂</div>
+            <div class="command-info">
+              <div class="command-name">/fly</div>
+              <div class="command-desc">Vuela libremente en el mundo survival. Permanente.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">7.99€</div>
+              <button class="command-btn" onclick="tAddToCart('Comando /fly', 7.99)">Comprar</button>
+            </div>
+          </div>
+          <div class="command-card">
+            <div class="command-icon">❤️‍🔥</div>
+            <div class="command-info">
+              <div class="command-name">/heal</div>
+              <div class="command-desc">Recupérate al instante. Cooldown de 10 minutos.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">4.99€</div>
+              <button class="command-btn" onclick="tAddToCart('Comando /heal', 4.99)">Comprar</button>
+            </div>
+          </div>
+          <div class="command-card">
+            <div class="command-icon">🍖</div>
+            <div class="command-info">
+              <div class="command-name">/feed</div>
+              <div class="command-desc">Llena tu barra de hambre al instante. Cooldown de 15 min.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">3.99€</div>
+              <button class="command-btn" onclick="tAddToCart('Comando /feed', 3.99)">Comprar</button>
+            </div>
+          </div>
+          <div class="command-card">
+            <div class="command-icon">🔧</div>
+            <div class="command-info">
+              <div class="command-name">/repair</div>
+              <div class="command-desc">Repara el objeto en tu mano al instante. 3 usos/día.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">5.99€</div>
+              <button class="command-btn" onclick="tAddToCart('Comando /repair', 5.99)">Comprar</button>
+            </div>
+          </div>
+          <div class="command-card">
+            <div class="command-icon">🎩</div>
+            <div class="command-info">
+              <div class="command-name">/hat</div>
+              <div class="command-desc">Pon cualquier bloque en tu cabeza como si fuera un sombrero.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">2.99€</div>
+              <button class="command-btn" onclick="tAddToCart('Comando /hat', 2.99)">Comprar</button>
+            </div>
+          </div>
+          <div class="command-card">
+            <div class="command-icon">📍</div>
+            <div class="command-info">
+              <div class="command-name">/back</div>
+              <div class="command-desc">Vuelve al lugar donde moriste o a tu última ubicación.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">3.49€</div>
+              <button class="command-btn" onclick="tAddToCart('Comando /back', 3.49)">Comprar</button>
+            </div>
+          </div>
+          <div class="command-card">
+            <div class="command-icon">🏠</div>
+            <div class="command-info">
+              <div class="command-name">/sethome extra</div>
+              <div class="command-desc">+5 hogares adicionales en tu cuenta.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">4.49€</div>
+              <button class="command-btn" onclick="tAddToCart('5x /sethome extra', 4.49)">Comprar</button>
+            </div>
+          </div>
+          <div class="command-card">
+            <div class="command-icon">🎭</div>
+            <div class="command-info">
+              <div class="command-name">/nick</div>
+              <div class="command-desc">Cambia tu apodo en el chat con colores. Permanente.</div>
+            </div>
+            <div class="command-price-col">
+              <div class="command-price">2.49€</div>
+              <button class="command-btn" onclick="tAddToCart('Comando /nick', 2.49)">Comprar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PACKS ===== -->
+      <div class="shop-section-panel" id="section-packs">
+        <div class="shop-section-header">
+          <span class="shop-section-label">🎁 Tienda › Packs Especiales</span>
+          <h1 class="shop-section-title">Packs Especiales</h1>
+          <p class="shop-section-desc">Combina rangos, llaves y monedas en packs con el mejor precio posible.</p>
+        </div>
+        <div class="shop-section-banner">
+          Los packs incluyen una combinación de rango, llaves y kalios <strong>con un descuento adicional</strong> respecto a comprarlos por separado.
+        </div>
+
+        <div class="subsection-label"><span>🎁 Packs Combinados</span></div>
+        <div class="shop-products-grid">
+
+          <div class="shop-item-card">
+            <div class="card-discount-pill">-50%</div>
+            <div class="card-img-wrap">
+              <img src="VIP.png" alt="Starter Pack" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">Pack Iniciador</div>
+              <div class="card-perks">Rango VIP · 8 Llaves VIP · 100K Kalios</div>
+              <div class="card-prices">
+                <span class="card-price-old">19.49€</span>
+                <span class="card-price-new">9.99€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Pack Iniciador', 9.99)">🛒 Añadir al carrito</button>
+            </div>
+          </div>
+
+          <div class="shop-item-card featured">
+            <div class="card-discount-pill">-55%</div>
+            <div class="card-img-wrap">
+              <img src="LUNAR.png" alt="Lunar Pack" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">Pack LUNAR</div>
+              <div class="card-perks">Rango LUNAR · 16 Llaves LUNAR · 500K Kalios · /fly</div>
+              <div class="card-prices">
+                <span class="card-price-old">66.99€</span>
+                <span class="card-price-new">29.99€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Pack LUNAR', 29.99)">🛒 Añadir al carrito</button>
+            </div>
+          </div>
+
+          <div class="shop-item-card featured">
+            <div class="card-discount-pill">-60%</div>
+            <div class="card-img-wrap">
+              <img src="SOLAR.png" alt="Solar Pack" style="filter: drop-shadow(0 0 22px rgba(245,158,11,0.55));" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">Pack SOLAR</div>
+              <div class="card-perks">Rango SOLAR · 32 Llaves SOLAR · 1M Kalios · /fly · /repair</div>
+              <div class="card-prices">
+                <span class="card-price-old">184.59€</span>
+                <span class="card-price-new">74.99€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Pack SOLAR', 74.99)">🛒 Añadir al carrito</button>
+            </div>
+          </div>
+
+          <div class="shop-item-card featured">
+            <div class="card-discount-pill">-65%</div>
+            <div class="card-img-wrap">
+              <img src="KALIUM.png" alt="Kalium Pack" style="filter: drop-shadow(0 0 26px rgba(245,158,11,0.7));" />
+            </div>
+            <div class="card-body">
+              <div class="card-name">Pack KALIUM ÉLITE</div>
+              <div class="card-perks">Rango SUPER KALIUM · 64 Llaves KALIUM · 5M Kalios · todos los comandos</div>
+              <div class="card-prices">
+                <span class="card-price-old">448.99€</span>
+                <span class="card-price-new">149.99€</span>
+              </div>
+              <button class="card-add-btn" onclick="tAddToCart('Pack KALIUM ÉLITE', 149.99)">🛒 Añadir al carrito</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ===== CART SIDEBAR ===== -->
+  <div class="cart-overlay" id="t-cart-overlay"></div>
+  <div class="cart-sidebar-panel glass" id="t-cart-sidebar">
+    <div class="cart-header-row">
+      <h3>🛒 Tu Carrito</h3>
+      <button class="cart-close-btn" id="t-close-cart">✕</button>
+    </div>
+    <div class="cart-items-list" id="t-cart-items">
+      <div class="cart-empty-state">
+        <div class="empty-icon">🛒</div>
+        <p>Tu carrito está vacío</p>
+      </div>
+    </div>
+    <div class="cart-footer-panel" id="t-cart-footer" style="display:none;">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <span id="t-cart-total">0.00€</span>
+      </div>
+      <div class="nick-field">
+        <label for="t-player-nick">Nick de Minecraft</label>
+        <input type="text" id="t-player-nick" placeholder="TuNick_MC" autocomplete="off" />
+      </div>
+      <button class="checkout-btn-full" id="t-checkout-btn">Ir al pago →</button>
+      <p class="cart-note-small">🔒 Pago seguro · No afiliado con Mojang</p>
+    </div>
+  </div>
+
+  <!-- FLOAT CART -->
+  <button class="float-cart-btn" id="t-float-cart">
+    🛒
+    <span class="float-cart-count" id="t-float-count">0</span>
+  </button>
+
+  <!-- NOTIFICATION -->
+  <div class="t-notification" id="t-notification"></div>
+
+  <!-- SIDEBAR TOGGLE (mobile) -->
+  <button class="sidebar-toggle-btn" id="sidebar-toggle-btn">☰</button>
+
+  <script>
+    // CONFIG
+    const STORE_CONFIG = {
+      SERVER_IP: "play.kaliummc.es",
+      ONLINE_PLAYERS: 247,
+      STORE_URL: "https://tienda.kaliummc.es",
+    };
+
+    // PARTICLES
+    (function(){
+      const canvas = document.getElementById("particles-canvas");
+      const ctx = canvas.getContext("2d");
+      let W, H, particles = [];
+      function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+      resize(); window.addEventListener("resize", resize);
+      for(let i=0;i<50;i++) particles.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.5+0.5, dx:(Math.random()-.5)*.2, dy:Math.random()*-.3-.05, opacity:Math.random()*.4+.05 });
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        particles.forEach(p=>{
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fillStyle=`rgba(14,165,233,${p.opacity})`; ctx.fill();
+          p.x+=p.dx; p.y+=p.dy;
+          if(p.y<-10){p.y=H+10; p.x=Math.random()*W;}
+          if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+        }); requestAnimationFrame(draw);
+      } draw();
+    })();
+
+    // CURSOR GLOW
+    const cg = document.getElementById("cursor-glow");
+    document.addEventListener("mousemove", e=>{ cg.style.left=e.clientX+"px"; cg.style.top=e.clientY+"px"; });
+
+    // SIDEBAR NAVIGATION
+    const sidebarBtns = document.querySelectorAll(".sidebar-nav-item");
+    const panels = document.querySelectorAll(".shop-section-panel");
+    sidebarBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        sidebarBtns.forEach(b => b.classList.remove("active"));
+        panels.forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        const sec = btn.dataset.section;
+        document.getElementById("section-" + sec)?.classList.add("active");
+        // Close sidebar on mobile after click
+        if(window.innerWidth <= 900) closeMobileSidebar();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+
+    // MOBILE SIDEBAR
+    const storeSidebar = document.getElementById("store-sidebar");
+    const sidebarOverlay = document.getElementById("sidebar-overlay");
+    const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
+    function openMobileSidebar(){
+      storeSidebar.classList.add("mobile-open");
+      sidebarOverlay.classList.add("open");
+    }
+    function closeMobileSidebar(){
+      storeSidebar.classList.remove("mobile-open");
+      sidebarOverlay.classList.remove("open");
+    }
+    sidebarToggleBtn.addEventListener("click", openMobileSidebar);
+    sidebarOverlay.addEventListener("click", closeMobileSidebar);
+
+    // CART
+    let tCart = [];
+    function tAddToCart(name, price){
+      const existing = tCart.find(i => i.name === name);
+      if(existing){ tShowNotif(`"${name}" ya está en tu carrito`); openTCart(); return; }
+      tCart.push({ name, price });
+      tUpdateCartUI();
+      tShowNotif(`✅ "${name}" añadido`, "success");
+      openTCart();
+    }
+    function tRemoveFromCart(idx){
+      tCart.splice(idx, 1);
+      tUpdateCartUI();
+    }
+    function tUpdateCartUI(){
+      const count = tCart.length;
+      document.getElementById("t-cart-count").textContent = count;
+      document.getElementById("t-float-count").textContent = count;
+      const itemsEl = document.getElementById("t-cart-items");
+      const footerEl = document.getElementById("t-cart-footer");
+      if(count === 0){
+        itemsEl.innerHTML = `<div class="cart-empty-state"><div class="empty-icon">🛒</div><p>Tu carrito está vacío</p></div>`;
+        footerEl.style.display = "none";
+      } else {
+        itemsEl.innerHTML = tCart.map((item,i) => `
+          <div class="cart-product-item">
+            <div class="cart-product-info">
+              <div class="cart-product-name">${item.name}</div>
+              <div class="cart-product-price">${item.price.toFixed(2)}€</div>
+            </div>
+            <button class="cart-remove-btn" onclick="tRemoveFromCart(${i})">✕</button>
+          </div>
+        `).join("");
+        footerEl.style.display = "flex";
+        const total = tCart.reduce((s,i) => s+i.price, 0);
+        document.getElementById("t-cart-total").textContent = total.toFixed(2) + "€";
+      }
+    }
+    function openTCart(){
+      document.getElementById("t-cart-sidebar").classList.add("open");
+      document.getElementById("t-cart-overlay").classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function closeTCart(){
+      document.getElementById("t-cart-sidebar").classList.remove("open");
+      document.getElementById("t-cart-overlay").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+    document.getElementById("t-open-cart").addEventListener("click", openTCart);
+    document.getElementById("t-float-cart").addEventListener("click", openTCart);
+    document.getElementById("t-close-cart").addEventListener("click", closeTCart);
+    document.getElementById("t-cart-overlay").addEventListener("click", closeTCart);
+
+    document.getElementById("t-checkout-btn").addEventListener("click", () => {
+      const nick = document.getElementById("t-player-nick").value.trim();
+      if(!nick){ tShowNotif("⚠️ Introduce tu nick de Minecraft"); document.getElementById("t-player-nick").focus(); return; }
+      if(tCart.length === 0) return;
+      const total = tCart.reduce((s,i) => s+i.price, 0);
+      tShowNotif(`🎮 Redirigiendo al checkout para ${nick}...`, "success");
+      setTimeout(() => {
+        alert(`✅ En producción, esto redirigirá a la pasarela de pago.\n\nNick: ${nick}\nTotal: ${total.toFixed(2)}€\n\nProductos:\n${tCart.map(i=>`- ${i.name}: ${i.price.toFixed(2)}€`).join("\n")}`);
+      }, 1000);
+    });
+
+    function tShowNotif(msg, type=""){
+      const el = document.getElementById("t-notification");
+      el.textContent = msg;
+      el.className = "t-notification show " + type;
+      setTimeout(() => { el.className = "t-notification"; }, 3000);
+    }
+
+    // ONLINE PLAYERS
+    document.getElementById("topbar-online").textContent = STORE_CONFIG.ONLINE_PLAYERS + " online";
+    document.getElementById("promo-online").textContent = STORE_CONFIG.ONLINE_PLAYERS + " jugadores conectados";
+
+    // PROMO CAROUSEL
+    const promoTrack = document.getElementById("promo-track");
+    const promoSlides = document.querySelectorAll(".promo-slide");
+    const promoDots = document.querySelectorAll(".promo-dot");
+    let promoIndex = 0, promoTimer;
+    function promoGo(i){
+      promoDots[promoIndex].classList.remove("active");
+      promoIndex = (i + promoSlides.length) % promoSlides.length;
+      promoTrack.style.transform = `translateX(-${promoIndex * 100}%)`;
+      promoDots[promoIndex].classList.add("active");
+    }
+    function promoMove(d){ promoGo(promoIndex + d); resetPromoTimer(); }
+    function resetPromoTimer(){ clearInterval(promoTimer); promoTimer = setInterval(() => promoGo(promoIndex + 1), 6000); }
+    resetPromoTimer();
+  </script>
+</body>
+</html>
