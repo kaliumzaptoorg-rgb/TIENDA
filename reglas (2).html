@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reglas — KALIUM Network</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── PAGE LAYOUT ── */
+    .rules-hero {
+      padding: 10rem 0 4rem;
+      text-align: center;
+      position: relative;
+    }
+    .rules-hero .hero-glow-orb { pointer-events: none; }
+
+    .rules-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 1.5rem 6rem;
+    }
+
+    /* ── INTRO BANNER ── */
+    .rules-intro {
+      background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(14,165,233,0.04));
+      border: 1px solid rgba(14,165,233,0.25);
+      border-radius: 1.2rem;
+      padding: 1.8rem 2rem;
+      margin-bottom: 3rem;
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+    .rules-intro-icon { font-size: 2rem; flex-shrink: 0; margin-top: 2px; }
+    .rules-intro p { color: var(--gray-300); line-height: 1.7; margin: 0; }
+
+    /* ── TOC ── */
+    .rules-toc {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 1rem;
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+    }
+    .rules-toc h3 { font-size: 0.85rem; letter-spacing: 0.12em; color: var(--sky); margin-bottom: 1rem; text-transform: uppercase; }
+    .rules-toc ol { margin: 0; padding-left: 1.2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 2rem; }
+    .rules-toc li a { color: var(--gray-400); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .rules-toc li a:hover { color: var(--sky); }
+    @media (max-width: 600px) { .rules-toc ol { grid-template-columns: 1fr; } }
+
+    /* ── SANCTION BOX ── */
+    .sanction-box {
+      background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.03));
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 1.2rem;
+      padding: 1.8rem 2rem;
+      margin-bottom: 3rem;
+    }
+    .sanction-box h2 { color: #f87171; font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; }
+    .sanction-box p, .sanction-box li { color: var(--gray-300); font-size: 0.92rem; line-height: 1.7; }
+    .sanction-box ul { padding-left: 1.2rem; margin: 0.5rem 0; }
+    .sanction-box strong { color: #fca5a5; }
+
+    /* ── SECTION BLOCK (estilo tarjeta tipo "REGLAS MINECRAFT") ── */
+    .rules-block {
+      margin-bottom: 2.5rem;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      border: 1px solid rgba(14,165,233,0.18);
+      background: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(14,165,233,0.06) 0%, transparent 60%), #0a0a0d;
+    }
+    .rules-block-header {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 1.3rem 1.8rem;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(14,165,233,0.05);
+      border-bottom: 1px solid rgba(14,165,233,0.12);
+      transition: background 0.2s;
+    }
+    .rules-block-header:hover { background: rgba(14,165,233,0.09); }
+    .rules-block-header .rbh-icon {
+      width: 40px; height: 40px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; border-radius: 10px;
+      background: rgba(14,165,233,0.12);
+      border: 1px solid rgba(14,165,233,0.35);
+    }
+    .rules-block-header h2 {
+      font-size: 1.1rem; font-weight: 900; color: var(--white); margin: 0; flex: 1;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      text-shadow: 0 0 16px rgba(14,165,233,0.35);
+    }
+    .rules-block-header .rbh-count { font-size: 0.75rem; color: var(--sky); background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.25); padding: 0.2rem 0.65rem; border-radius: 2rem; white-space: nowrap; }
+    .rules-block-header .rbh-arrow { color: var(--gray-500); transition: transform 0.3s; font-size: 0.9rem; }
+    .rules-block.open .rbh-arrow { transform: rotate(180deg); }
+
+    .rules-block-body {
+      display: none;
+      position: relative;
+      padding: 1.6rem 2rem 1.8rem;
+    }
+    .rules-block.open .rules-block-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0 3rem; }
+    /* Línea divisoria central estilo "circuito" */
+    .rules-block.open .rules-block-body::before {
+      content: '';
+      position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(14,165,233,0.5) 12%, rgba(14,165,233,0.5) 88%, transparent);
+      transform: translateX(-50%);
+    }
+    .rules-block.open .rules-block-body::after {
+      content: '';
+      position: absolute; left: 50%; top: -4px; width: 7px; height: 7px;
+      background: var(--sky); transform: translateX(-50%); border-radius: 1px;
+      box-shadow: 0 0 8px rgba(14,165,233,0.8);
+    }
+    @media (max-width: 700px) {
+      .rules-block.open .rules-block-body { grid-template-columns: 1fr; }
+      .rules-block.open .rules-block-body::before,
+      .rules-block.open .rules-block-body::after { display: none; }
+    }
+
+    /* ── RULE ITEM ── */
+    .rule-item {
+      display: block;
+      padding: 0.85rem 0;
+      transition: opacity 0.15s;
+    }
+    .rule-item:hover { opacity: 0.92; }
+    .rule-num { display: none; }
+    .rule-content strong {
+      display: block;
+      position: relative;
+      padding-left: 16px;
+      color: var(--sky);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .rule-content strong::before {
+      content: '';
+      position: absolute; left: 0; top: 0.42em;
+      width: 7px; height: 7px;
+      background: var(--sky);
+      box-shadow: 0 0 6px rgba(14,165,233,0.7);
+    }
+    .rule-content p {
+      color: var(--gray-200, #e2e8f0);
+      font-size: 0.875rem;
+      line-height: 1.65;
+      margin: 0;
+      padding-left: 16px;
+    }
+    .rule-content .rule-sub {
+      margin-top: 0.5rem;
+      margin-left: 16px;
+      padding-left: 0.8rem;
+      border-left: 2px solid rgba(14,165,233,0.2);
+      color: var(--gray-500);
+      font-size: 0.83rem;
+      line-height: 1.6;
+    }
+    .rule-content .sev { margin-left: 16px; }
+
+    /* ── SEVERITY BADGES ── */
+    .sev { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 2rem; margin-top: 0.5rem; letter-spacing: 0.05em; }
+    .sev-warn  { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+    .sev-ban   { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .sev-perm  { background: rgba(139,0,0,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.5); }
+
+    /* ── ACLARACIONES ── */
+    .acl-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      padding: 1rem 1.2rem 1.2rem;
+    }
+    @media (max-width: 600px) { .acl-grid { grid-template-columns: 1fr; } }
+    .acl-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 0.8rem;
+      padding: 1rem 1.1rem;
+    }
+    .acl-item strong { display: block; color: var(--sky); font-size: 0.85rem; margin-bottom: 0.35rem; }
+    .acl-item p { color: var(--gray-400); font-size: 0.82rem; line-height: 1.6; margin: 0; }
+
+    /* ── LAST UPDATED ── */
+    .rules-footer-note {
+      text-align: center;
+      color: var(--gray-600);
+      font-size: 0.8rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR GLOW -->
+  <div id="cursor-glow"></div>
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="LOGO.png" alt="Kalium" onerror="this.style.display='none'" />
+        <span>KALIUM</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="comojugar.html">Cómo Jugar</a></li>
+        <li><a href="reglas.html" class="active">Reglas</a></li>
+        <li><a href="https://discord.gg/JebTuFsWKD" target="_blank">Discord</a></li>
+        <li><a href="postulaciones.html">Postulaciones</a></li>
+        <li><a href="tienda.html" class="nav-store-link">Tienda</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="server-status">
+          <span class="status-dot"></span>
+          <span class="status-ip">play.kaliummc.es</span>
+        </div>
+        <button class="btn-connect" onclick="copyIP('play.kaliummc.es')">Copiar IP</button>
+      </div>
+      <button class="nav-toggle" id="nav-toggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="comojugar.html">Cómo Jugar</a></li>
+        <li><a href="reglas.html">Reglas</a></li>
+        <li><a href="https://discord.gg/JebTuFsWKD" target="_blank">Discord</a></li>
+        <li><a href="tienda.html">Tienda</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="rules-hero">
+    <div class="hero-glow-orb orb1"></div>
+    <div class="hero-glow-orb orb2"></div>
+    <div class="section-tag" style="display:inline-block;margin-bottom:1rem;">Documento Oficial</div>
+    <h1 class="section-title" style="font-size:clamp(2rem,5vw,3.2rem);">Normativa de<br><span style="color:var(--sky)">Kalium Network</span></h1>
+    <p style="color:var(--gray-400);max-width:520px;margin:1rem auto 0;line-height:1.7;">
+      Lee las normas antes de jugar. El desconocimiento de la normativa no exime de sanción.
+    </p>
+  </section>
+
+  <div class="rules-container">
+
+    <!-- INTRO -->
+    <div class="rules-intro">
+      <div class="rules-intro-icon">📋</div>
+      <p>Bienvenido a <strong style="color:var(--white)">Kalium</strong>. Te recomendamos leer toda la normativa para no cometer ninguna infracción que pueda llevarte a ser sancionado. Las reglas aplican tanto en el servidor de Minecraft como en el Discord.</p>
+    </div>
+
+    <!-- TOC -->
+    <div class="rules-toc">
+      <h3>Contenido</h3>
+      <ol>
+        <li><a href="#sanciones">Sistema de Sanciones</a></li>
+        <li><a href="#generales">Normas Generales</a></li>
+        <li><a href="#discord">Normas Discord</a></li>
+        <li><a href="#minecraft">Normas Minecraft</a></li>
+        <li><a href="#tienda">Normas Tienda</a></li>
+        <li><a href="#aclaraciones">Advertencias y Aclaraciones</a></li>
+      </ol>
+    </div>
+
+    <!-- SANCIONES -->
+    <div class="sanction-box" id="sanciones">
+      <h2>⚖️ Sistema de Sanciones</h2>
+      <p>El servidor de Discord está conectado al de Minecraft. Ten en cuenta lo siguiente:</p>
+      <ul>
+        <li>Una sanción leve puede ser un <strong>warn (aviso)</strong>. A los tres warns, el usuario será baneado según la gravedad y el historial.</li>
+        <li><strong>Mute en Minecraft = Aislamiento en Discord</strong> (misma duración).</li>
+        <li>Los baneos se aplican en ambos sitios con la misma duración, salvo si el baneo dura menos de dos semanas (solo se aplica en el juego).</li>
+      </ul>
+      <p style="margin-top:1rem;"><strong>Clasificación de baneos (nivel 1–3):</strong></p>
+      <ul>
+        <li>Permaban por <strong>un baneo de nivel 3</strong></li>
+        <li>Permaban por <strong>dos baneos de nivel 2</strong></li>
+        <li>Permaban por <strong>tres baneos de nivel 1</strong></li>
+      </ul>
+    </div>
+
+    <!-- NORMAS GENERALES -->
+    <div class="rules-block open" id="generales">
+      <div class="rules-block-header" onclick="toggleBlock(this)">
+        <span class="rbh-icon">📜</span>
+        <h2>Normas Generales</h2>
+        <span class="rbh-count">15 reglas</span>
+        <span class="rbh-arrow">▼</span>
+      </div>
+      <div class="rules-block-body">
+
+        <div class="rule-item">
+          <div class="rule-num">1</div>
+          <div class="rule-content">
+            <strong>Prohibido insultar o faltar el respeto</strong>
+            <p>No se toleran insultos hacia ningún miembro. Aplica aunque las palabras estén camufladas con símbolos o escritas de forma incompleta, siempre que se entiendan.</p>
+            <span class="sev sev-warn">⚠️ Warn / Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">2</div>
+          <div class="rule-content">
+            <strong>No spam ni flood</strong>
+            <p>Prohibido el contenido promocional, mensajes excesivamente largos o vacíos, más de 2 mensajes iguales seguidos, todo en mayúsculas o menciones masivas sin motivo.</p>
+            <span class="sev sev-warn">⚠️ Warn</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">3</div>
+          <div class="rule-content">
+            <strong>Respeto al Staff</strong>
+            <p>Trata a los staffs de forma formal en tickets y en el chat. No está permitido mencionar al Staff sin un motivo previo ni invadir su privacidad o tiempo de trabajo.</p>
+            <span class="sev sev-warn">⚠️ Warn</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">4</div>
+          <div class="rule-content">
+            <strong>No se admiten multicuentas</strong>
+            <p>Si se detectan dos cuentas, se analizará su uso. Las multicuentas solo se permiten con aprobación previa del Staff. En Discord el máximo es dos cuentas.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">5</div>
+          <div class="rule-content">
+            <strong>No publicar información personal ajena</strong>
+            <p>Compartir datos de otro miembro sin su consentimiento (dirección, teléfono, familiares…) está penalizado con gravedad.</p>
+            <span class="sev sev-perm">🔴 Ban grave</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">6</div>
+          <div class="rule-content">
+            <strong>Amenazas y extorsión prohibidas</strong>
+            <p>No se tolerará ningún tipo de amenaza de daño físico, chantaje o intimidación para obtener objetos, dinero u otra cosa.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">7</div>
+          <div class="rule-content">
+            <strong>Evitar temas sensibles</strong>
+            <p>Se recomienda no tratar política, religión o temas discriminatorios en los canales generales.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">8</div>
+          <div class="rule-content">
+            <strong>No compartir contenido +18</strong>
+            <p>Imágenes, vídeos, enlaces o discusiones sexuales, violentas, gore o explícitas están terminantemente prohibidas. Kalium es un espacio seguro para todas las edades.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">9</div>
+          <div class="rule-content">
+            <strong>No hablar de otros juegos o servidores</strong>
+            <p>Este servidor es para la comunidad Kalium. Para tratar temas de otros juegos o servidores usa el mensaje privado.</p>
+            <span class="sev sev-warn">⚠️ Warn</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">10</div>
+          <div class="rule-content">
+            <strong>Sentido común</strong>
+            <p>Si crees que algo está mal o puede ser indebido, mejor no lo hagas.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">11</div>
+          <div class="rule-content">
+            <strong>Autoridad del Staff</strong>
+            <p>El owner y los staffs tienen autoridad para tomar decisiones finales y aplicar medidas, incluso en situaciones no cubiertas explícitamente por la normativa.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">12</div>
+          <div class="rule-content">
+            <strong>Suplantación de identidad prohibida</strong>
+            <p>Está prohibido hacerse pasar por otro usuario o por un miembro del Staff cambiando el nombre o la foto de perfil.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">13</div>
+          <div class="rule-content">
+            <strong>Servidores paralelos prohibidos</strong>
+            <p>No puedes crear un servidor de Discord o Minecraft con miembros de Kalium sin consultar y justificarlo previamente al owner (Potaxio).</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">14</div>
+          <div class="rule-content">
+            <strong>No hablar mal de Kalium en otros servidores</strong>
+            <p>Hablar de forma negativa sobre Kalium en otros servidores o chats será penalizado dentro del servidor.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">15</div>
+          <div class="rule-content">
+            <strong>Los temas administrativos son privados</strong>
+            <p>Los tickets y charlas privadas con el Staff no deben hacerse públicos en ningún canal.</p>
+            <span class="sev sev-warn">⚠️ Warn</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NORMAS DISCORD -->
+    <div class="rules-block" id="discord">
+      <div class="rules-block-header" onclick="toggleBlock(this)">
+        <span class="rbh-icon">💬</span>
+        <h2>Normas Discord</h2>
+        <span class="rbh-count">8 reglas</span>
+        <span class="rbh-arrow">▼</span>
+      </div>
+      <div class="rules-block-body">
+
+        <div class="rule-item">
+          <div class="rule-num">16</div>
+          <div class="rule-content">
+            <strong>Buen uso de los canales</strong>
+            <p>Cada canal tiene su finalidad. Respétala. La normativa específica de cada canal está en su descripción. En el canal survival-mc no se mantienen conversaciones entre usuarios de Discord.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">17</div>
+          <div class="rule-content">
+            <strong>Prohibido el uso de mayúsculas para llamar la atención</strong>
+            <p>Está prohibido usar mayúsculas, negrita, subrayado o texto en grande con el fin de molestar o destacar artificialmente.</p>
+            <span class="sev sev-warn">⚠️ Warn</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">18</div>
+          <div class="rule-content">
+            <strong>No hacer ruidos molestos en voz</strong>
+            <p>Cantar, gritar o usar moduladores de voz está prohibido en los canales de voz. Se requiere un ambiente tranquilo.</p>
+            <span class="sev sev-warn">⚠️ Warn / Mute</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">19</div>
+          <div class="rule-content">
+            <strong>TTS, música y sonidos reglamentados</strong>
+            <p>Para TTS usa el bot oficial del servidor. Para música usa los bots "Tocadiscos" o "Noteblock" ejecutando el comando en el canal de voz correspondiente. Los sonidos del dispositivo deben reproducirse desde el panel de sonidos.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">20</div>
+          <div class="rule-content">
+            <strong>Tickets con finalidad real</strong>
+            <p>Se sancionará abrir un ticket para molestar o hacer perder el tiempo al Staff.</p>
+            <span class="sev sev-warn">⚠️ Warn / Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">21</div>
+          <div class="rule-content">
+            <strong>Foros relacionados con Kalium</strong>
+            <p>No abras un foro en "anuncios jugadores" sin finalidad o con temas externos a Kalium.</p>
+            <span class="sev sev-warn">⚠️ Warn</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">22</div>
+          <div class="rule-content">
+            <strong>Prohibido bugear warneos o mutes</strong>
+            <p>Salir y volver a entrar al servidor para evadir un warneo o mute activo está prohibido.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">23</div>
+          <div class="rule-content">
+            <strong>No abusar de las mejoras (boosts)</strong>
+            <p>Prohibido boostear, retirar el boost y volver a mejorar el servidor para obtener más tiempo de rango.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NORMAS MINECRAFT -->
+    <div class="rules-block" id="minecraft">
+      <div class="rules-block-header" onclick="toggleBlock(this)">
+        <span class="rbh-icon">⛏️</span>
+        <h2>Normas Minecraft</h2>
+        <span class="rbh-count">13 reglas</span>
+        <span class="rbh-arrow">▼</span>
+      </div>
+      <div class="rules-block-body">
+
+        <div class="rule-item">
+          <div class="rule-num">24</div>
+          <div class="rule-content">
+            <strong>Prohibido el uso de hacks</strong>
+            <p>Cualquier ventaja injusta (hack clients, cheats) será sancionada. Los hacks evidentes se sancionan directamente sin pedir explicación.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">25</div>
+          <div class="rule-content">
+            <strong>Autoclicker o similares prohibidos</strong>
+            <p>Prohibido el uso de autoclicker y aplicaciones para grabar y repetir movimientos en granjas AFK. La inactividad con movimiento repetitivo detectado será sancionada.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">26</div>
+          <div class="rule-content">
+            <strong>No grifear zonas protegidas</strong>
+            <p>Está prohibido colocar bloques, mobs o cualquier elemento para molestar al dueño de una protección, así como matar dentro de áreas protegidas.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">27</div>
+          <div class="rule-content">
+            <strong>Bugear protecciones es falta grave</strong>
+            <p>Modificar la protección de otro jugador sin permisos, de cualquier forma, será sancionado muy gravemente.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">28</div>
+          <div class="rule-content">
+            <strong>No TpaKill</strong>
+            <p>Si un jugador muere a manos del otro en los 5 minutos posteriores a aceptar un /tpa, se considera TpaKill. También aplica si fue empujado para caer o mantenido en combate para dificultar la huida.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">29</div>
+          <div class="rule-content">
+            <strong>No causar lag intencionado</strong>
+            <p>Máquinas o construcciones diseñadas para laguear el servidor serán eliminadas de inmediato y el responsable sancionado.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">30</div>
+          <div class="rule-content">
+            <strong>Prohibido el dupeo</strong>
+            <p>Cualquier tipo de duplicación de objetos, incluido el dupeo vanilla, será sancionado. Las mejoras de armadura no entran en esta regla.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">31</div>
+          <div class="rule-content">
+            <strong>Reportar bugs, no explotarlos</strong>
+            <p>Si encuentras un bug, avisa al Staff lo antes posible. Abusar de un bug será sancionado. Reportarlo puede ser recompensado.</p>
+            <span class="sev sev-ban">🔴 Ban por abuso</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">32</div>
+          <div class="rule-content">
+            <strong>Construcciones respetuosas</strong>
+            <p>Todas las construcciones deben ser apropiadas y no afectar la experiencia de otros jugadores.</p>
+            <span class="sev sev-warn">⚠️ Warn / Eliminación</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">33</div>
+          <div class="rule-content">
+            <strong>Farmkill y Spawnkill prohibidos</strong>
+            <p>Matar a un jugador repetidamente de forma seguida, sea consentido o no, está penalizado.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">34</div>
+          <div class="rule-content">
+            <strong>Skins y nombres apropiados</strong>
+            <p>Cualquier skin o nombre considerado inapropiado por el Staff podrá ser motivo de sanción y solicitud de cambio de cuenta.</p>
+            <span class="sev sev-warn">⚠️ Warn / Ban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">35</div>
+          <div class="rule-content">
+            <strong>Granjas de jobs automáticas reguladas</strong>
+            <p>Las granjas que generan dinero de jobs sin intervención del usuario deben ser revisadas por el Staff previamente y no pueden superar los <strong style="color:var(--sky)">300.000 Kalios/hora</strong>.</p>
+            <span class="sev sev-ban">🔴 Ban por abuso</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">36</div>
+          <div class="rule-content">
+            <strong>Prohibido raidear el spawn</strong>
+            <p>Modificar el spawn de cualquier forma no autorizada conlleva a una sanción.</p>
+            <span class="sev sev-ban">🔴 Ban</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NORMAS TIENDA -->
+    <div class="rules-block" id="tienda">
+      <div class="rules-block-header" onclick="toggleBlock(this)">
+        <span class="rbh-icon">🛒</span>
+        <h2>Normas Tienda</h2>
+        <span class="rbh-count">3 reglas</span>
+        <span class="rbh-arrow">▼</span>
+      </div>
+      <div class="rules-block-body">
+
+        <div class="rule-item">
+          <div class="rule-num">37</div>
+          <div class="rule-content">
+            <strong>Productos temporales sin recuperación</strong>
+            <p>Una vez finalizado el periodo del producto comprado, no nos hacemos responsables de los ítems perdidos, incluyendo los guardados en mochilas (/pv).</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">38</div>
+          <div class="rule-content">
+            <strong>Política de pagos</strong>
+            <p>Realizar una transacción con la tarjeta de otra persona sin su autorización tendrá graves consecuencias dentro del servidor.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">39</div>
+          <div class="rule-content">
+            <strong>Sabotaje de la tienda</strong>
+            <p>Intentar sabotear la tienda mediante bugs o ataques, ya sean internos o externos, resultará en un permaban inmediato.</p>
+            <span class="sev sev-perm">🔴 Permaban</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ACLARACIONES -->
+    <div class="rules-block" id="aclaraciones">
+      <div class="rules-block-header" onclick="toggleBlock(this)">
+        <span class="rbh-icon">💡</span>
+        <h2>Advertencias y Aclaraciones</h2>
+        <span class="rbh-count">9 puntos</span>
+        <span class="rbh-arrow">▼</span>
+      </div>
+      <div class="rules-block-body">
+        <div class="acl-grid">
+          <div class="acl-item">
+            <strong>Permisos en protecciones</strong>
+            <p>Si otorgas permisos a otro jugador en tu protección, confías en él para cualquier cambio. Un grifeo con permisos dados no será penalizado.</p>
+          </div>
+          <div class="acl-item">
+            <strong>Jugadores de Bedrock</strong>
+            <p>Los usuarios de Bedrock no pueden acceder al casino ni aplicar encantamientos custom. Se está trabajando en solucionarlo.</p>
+          </div>
+          <div class="acl-item">
+            <strong>Uso de /fly en rangos</strong>
+            <p>El owner, manager, administradores y personas con rangos emblemáticos pueden usar /fly en survival para su propio beneficio.</p>
+          </div>
+          <div class="acl-item">
+            <strong>Sistema de Permaban</strong>
+            <p>El inventario, rango y dinero de un jugador perma baneado permanece en su cuenta. Sus protecciones serán eliminadas pasado un tiempo.</p>
+          </div>
+          <div class="acl-item">
+            <strong>Streamers Staff</strong>
+            <p>Los CCs del Staff pueden sortear objetos o dinero del creativo para su comunidad, siempre con moderación y aprobación del owner.</p>
+          </div>
+          <div class="acl-item">
+            <strong>Estafar en el juego es legal</strong>
+            <p>Las estafas dentro del juego no están penalizadas. Para transacciones seguras, usa el plugin de tradeos.</p>
+          </div>
+          <div class="acl-item">
+            <strong>Tratos entre jugadores</strong>
+            <p>El Staff no interviene en acuerdos privados entre jugadores. Si un trato no se cumple, el equipo no se responsabiliza.</p>
+          </div>
+          <div class="acl-item">
+            <strong>El servidor es Kalium Network</strong>
+            <p>Este no es un servidor para buscar gente con quien jugar en otros juegos. Juega en Kalium o busca el canal adecuado.</p>
+          </div>
+          <div class="acl-item">
+            <strong>Corazones Totales</strong>
+            <p>El encantamiento custom Dragon Heart no suma corazones por encima de los conseguidos con las Skills en Survival.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="rules-footer-note">Normativa vigente de Kalium Network · Documento Oficial · Sujeto a cambios por el equipo de Staff</p>
+
+  </div><!-- /rules-container -->
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-glow"></div>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="LOGO.png" alt="Kalium" class="footer-logo" onerror="this.style.display='none'" />
+          <span class="footer-name">KALIUM</span>
+          <p>Servidor Minecraft semivanilla, semicustom, semianárquico y técnico.</p>
+          <div class="footer-social">
+            <a href="https://discord.gg/JebTuFsWKD" class="social-btn" title="Discord" target="_blank">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.08.112 18.1.13 18.11a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h5>Navegación</h5>
+            <a href="index.html">Inicio</a>
+            <a href="comojugar.html">Cómo Jugar</a>
+            <a href="reglas.html">Reglas</a>
+            <a href="https://discord.gg/JebTuFsWKD" target="_blank">Discord</a>
+            <a href="tienda.html">Tienda</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 KALIUM. Todos los derechos reservados. No afiliado con Mojang Studios.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="notification" class="notification"></div>
+  <script src="main.js"></script>
+  <script>
+    // Toggle accordion blocks
+    function toggleBlock(header) {
+      const block = header.parentElement;
+      block.classList.toggle('open');
+    }
+
+    // Smooth scroll for TOC links
+    document.querySelectorAll('.rules-toc a').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (!target.classList.contains('open')) {
+            target.classList.add('open');
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
